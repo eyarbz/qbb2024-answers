@@ -1,0 +1,81 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#2. Prepare your working environment
+
+library("tidyverse")
+```
+
+```{R}
+#3. Wrangle the sample metadata
+
+df <- read_tsv("~/Data/GTEx/GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt")
+df <- df %>%
+  mutate( SUBJECT=str_extract( SAMPID, "[^-]+-[^-]+" ), .before=1 )
+```
+
+```{r}
+#4. Which two SUBJECTs have the most samples? The least?
+
+df_subject <- df %>% 
+  group_by(SUBJECT) %>% 
+  summarise(count = n()) %>% 
+  arrange(-count)
+
+#K-562 and GTEX-NPJ8 have the most. GTEX-1JMI6 and GTEX-1PAR6 have the least
+```
+
+```{r}
+#5. Which two SMTSDs (tissue types) have the most samples? The least? Why?
+
+df_SMTSD <- df %>% 
+  group_by(SMTSD) %>% 
+  summarise(count = n()) %>% 
+  arrange(-count)
+
+#Kidney - Medulla and Cervix - Ectocervix have the least, Whole Blood and Muscle - Skeletal have the most
+```
+
+```{r}
+#6. For subject GTEX-NPJ8 1.) Filter for samples from this subject and save as a new object (e.g. df_npj8) 2.) Which tissue has the most samples? 3.) For that tissue, what is different between the samples? Scroll to the 15th through 20th columns
+
+df_npj8 <- df %>% 
+  group_by(SUBJECT) %>% 
+  filter(SUBJECT == "GTEX-NPJ8")
+
+df_npj8 %>% 
+  group_by(SMTSD) %>% 
+  summarise(count = n()) %>% 
+  arrange(-count)
+
+#Whole Blood has the highest count. 
+
+df_npj8_whole_blood <- df_npj8 %>% 
+  group_by(SMTSD) %>% 
+  filter(SMTSD == "Whole Blood")
+
+df_npj8_whole_blood[,(15:20)]
+
+#Sequencing methods differ
+```
+
+```{r}
+#7. Explore SMATSSCR (autolysis score)
+
+df_SMATSSCR_means <- df %>% 
+  group_by(SUBJECT) %>% 
+  filter( !is.na(SMATSSCR) ) %>% 
+  summarise(means = mean(SMATSSCR))
+
+#contains all mean values for smatsscr 
+df_SMATSSCR_means_zero <- filter(df_SMATSSCR_means, means == 0)
+#15 have a count of 0
+
+hist(df_SMATSSCR_means$means)
+#High number of means just below 1
+```
+
+

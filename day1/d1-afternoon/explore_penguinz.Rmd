@@ -1,0 +1,45 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(ggthemes)
+
+view(penguins)
+
+ggplot(data = penguins, 
+       mapping = aes(x = flipper_length_mm, 
+                     y = body_mass_g)) +
+  geom_point(mapping = aes(color = species,
+                     shape = species)) +
+  scale_color_manual(values = c("limegreen", "black", "hotpink")) +
+  geom_smooth(method = "lm") +
+  xlab("Flipper length (mm)") +
+  ylab("Body mass (g)") +
+  ggtitle("Relationship between flipper length and body mass")
+
+ggsave(filename = "penguin_plot.pdf")
+```
+
+```{r}
+#Does bill length depend on sex of pengu
+
+
+ggplot(data = penguins, mapping = aes(x = bill_length_mm, fill = sex)) +
+  geom_histogram() +
+  facet_grid(sex ~ species)
+```
+
+```{r}
+#Relationship between year and body mass?
+
+ggplot(data = penguins, mapping = aes(x = factor(year), 
+                                      y = body_mass_g,
+                                      fill = sex)) +
+  geom_boxplot()
+
+```
