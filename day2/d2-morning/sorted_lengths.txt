@@ -1,0 +1,4 @@
+   61633 hg38-gene-metadata-feature.tsv
+   69601 hg38-gene-metadata-homologs.tsv
+  293343 hg38-gene-metadata-go.tsv
+  424577 total
