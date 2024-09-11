@@ -1,0 +1,30 @@
+---
+title: "Day 4 lunch homework"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+
+df <- read.table("/Users/cmdb/qbb2024-answers/d4-lunch/id_tissue_expressions.tsv", sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+
+df <- df %>% 
+  mutate(Tissue_Gene=paste0(tissue, " ", gene_id)) %>% 
+  mutate(expression = expression +1) %>% 
+  mutate(expression_log2 = log2(expression))
+  
+ggplot(data = df, mapping = aes(x = Tissue_Gene, y = expression_log2, fill = Tissue_Gene)) +
+  geom_violin() + 
+  coord_flip() +
+  labs(x = "Tissue + gene",
+       y = "Expression (log2)") +
+  theme_classic() +
+  theme(legend.position = "none")
+
+#Not surprising, since these genes are tissue specific it makes sense they would be highly expressed
+#There is a lot less variability in pancreatic genes and one liver gene. Maybe this is because metabolic control from the pancreas must be tightly regulated, so gene expression is also very tight. 
+
+```
+
+
+
