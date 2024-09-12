@@ -1,0 +1,101 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(broom)
+
+#Step 1.1
+dnm <- read_csv(file = '/Users/cmdb/qbb2024-answers/d4-afternoon/aau1043_dnm.csv')
+
+#Step 1.2
+dnm_summary <- dnm %>% 
+  group_by(Proband_id) %>% 
+  summarize(n_paternal_dnm = sum(Phase_combined == 'father', na.rm = TRUE),
+            n_maternal_dnm = sum(Phase_combined == 'mother', na.rm = TRUE))
+
+#Step 1.3
+ages <- read_csv(file = '/Users/cmdb/qbb2024-answers/d4-afternoon/aau1043_parental_age.csv')
+
+#Step 1.4
+dnm_ages_summary <- left_join(dnm_summary, ages, by = "Proband_id")
+```
+
+```{r}
+#Step 2.1
+ggplot(data = dnm_ages_summary, mapping = aes(x = Mother_age, y = n_maternal_dnm)) + 
+  geom_point() +
+  geom_smooth(method = "lm") + 
+  xlab("Maternal age (years)") +
+  ylab("No. of maternal DNMs") + 
+  theme_classic()
+  
+ggplot(data = dnm_ages_summary, mapping = aes(x = Father_age, y = n_paternal_dnm)) + 
+  geom_point() +
+  geom_smooth(method = "lm") + 
+  xlab("Paternal age (years)") +
+  ylab("No. of paternal DNMs") + 
+  theme_classic()
+```
+
+```{r}
+#Step 2.2
+
+maternal_fit = lm(n_maternal_dnm ~ Mother_age, data = dnm_ages_summary)
+summary(maternal_fit)
+
+#I interpret the size to be the slope, which is ~0.378. This matches the plot from earlier with a shallower slope (relative to paternal). I'm interpreting this as DNM increases with maternal age.
+#The relationship is significant, since the p value is less than 2e-16
+```
+
+```{r}
+#Step 2.3
+
+paternal_fit = lm(n_paternal_dnm ~ Father_age, data = dnm_ages_summary)
+summary(paternal_fit)
+
+#I interpret the size to be the slope, which is ~1.35. This matches the plot from earlier with a steeper slope (relative to maternal). I'm interpreting this as DNM increases with paternal age.
+#The relationship is significant, since the p value is less than 2e-16
+```
+
+```{r}
+#Step 2.4
+pat_coeffs <- coefficients(paternal_fit)
+age <- 50.5
+dnm_pat_pred <- age*pat_coeffs[2] + pat_coeffs[1]
+print(dnm_pat_pred)
+
+# ~78.7 DNMs. Got by multiplying age by slope and adding intercept.
+```
+
+```{r}
+#Step 2.5
+long_df <- dnm_ages_summary %>%
+  pivot_longer(cols = c(n_paternal_dnm, n_maternal_dnm), 
+               names_to = "Distribution", 
+               values_to = "Number_of_DNMs")
+
+ggplot(data = long_df, aes(x = Number_of_DNMs, fill = Distribution)) +
+  geom_histogram(binwidth = 1, 
+                 alpha = 0.5, 
+                 position = 'identity') +
+  labs(x = "Number of DNMs",
+       y = "Frequency") +
+  scale_fill_manual(values = c('hotpink', 'limegreen'), 
+                    name = "Distribution",
+                    labels = c("Maternal", "Paternal")) +
+  theme_classic()
+  
+```
+```{r}
+stat_test <- t.test(dnm_ages_summary$n_paternal_dnm, dnm_ages_summary$n_maternal_dnm, paired = TRUE)
+print(stat_test)
+
+#I chose a paired t test because within the same individual there are two paired data points, maternal dnms and paternal dnms
+#Yes, p value < 2.2e-16. This means there is a statistical difference between number of dnms inherited from father vs mother, and differences are not just noise.
+```
+
+
