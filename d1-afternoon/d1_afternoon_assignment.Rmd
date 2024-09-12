@@ -15,7 +15,7 @@ df <- read_delim("/Users/cmdb/Data/GTEx/GTEx_Analysis_v8_Annotations_SampleAttri
 ```{r}
 #Q2: View the first rows of the tibble by simply entering the variable name in which you stored it. Notice that some of the columns were cut off due to the limits of the display. Use the glimpse() function to examine the data types and first entries of all of the columns.
 
-glimpse(df)
+#glimpse(df)
 ```
 
 ```{r}
@@ -67,6 +67,8 @@ ggplot(data = df_RNAseq, mapping = aes(x = SMGNSDTC, y = SMTSD)) +
   xlab("No. of genes") +
   ylab("Tissue type") +
   theme_classic()
+
+#There are differences, with testis tissue looking like an outlier with a much higher number of genes transcribed. This is consistent with an observation called transcriptional scanning, where high transcription is coupled to efficient DNA damage repair, which is important for the testis as this DNA will be inherited by offspring. 
 ```
 ```{r}
 #Q8: Plot the relationship between ischemic time and RIN
