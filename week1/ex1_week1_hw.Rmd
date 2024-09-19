@@ -1,0 +1,54 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+```{r}
+library(tidyverse)
+
+#Read in the data
+genome_coverage <- read.table("/Users/cmdb/qbb2024-answers/week1/genome_coverage.txt", header = TRUE)
+poisson_simulation <- read.table("/Users/cmdb/qbb2024-answers/week1/poisson.txt", header = TRUE)
+normal_simulation <- read.table("/Users/cmdb/qbb2024-answers/week1/normal.txt", header = TRUE)
+
+#Collapse list of coverages into frequency table
+genome_coverage_freq <- genome_coverage %>% 
+  group_by(Coverage) %>% 
+  summarize(Frequency = n(), .groups = 'drop')
+
+#Combine dataframes from simulation and poisson dist and normal dist
+combined_df <- genome_coverage_freq %>% 
+  left_join(poisson_simulation, by = "Coverage") %>% 
+  left_join(normal_simulation, by = "Coverage") %>% 
+  rename(Simulation_freqs = Frequency.x, Poisson_freqs = Frequency.y, Normal_freqs = Frequency)
+
+#Convert dataframe to long form
+long_df <- combined_df %>% 
+  pivot_longer(cols = c(Simulation_freqs, Poisson_freqs, Normal_freqs), 
+               names_to = "Method", 
+               values_to = "Frequency")
+
+#Plot with ggplot
+ggplot(long_df, aes(x = Coverage, y = Frequency, fill = Method)) +
+  geom_bar(stat = "identity", 
+           position = "identity", 
+           #color = 'black', 
+           #size = 0.5, 
+           width = 0.8, 
+           alpha = 0.3) +
+  geom_line(data = long_df, 
+            aes(color = Method, group = Method), 
+            size = 1, 
+            alpha = 0.5) +
+  labs(title = "Histogram of Coverage Frequencies by Method",
+       x = "Coverage",
+       y = "Frequency") +
+  theme_classic()
+
+ggsave("/Users/cmdb/qbb2024-answers/week1/ex1_30x_cov.png", dpi = 600)
+```
+
+
+
