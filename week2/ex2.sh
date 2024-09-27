@@ -9,7 +9,7 @@ do
     snp_sum_genome=$(awk '{s+=$4}END{print s}' chr1_coverage_${MAF_value}.txt)
     chr_size=$(awk '{s+=$6}END{print s}' chr1_coverage_${MAF_value}.txt)
     background=$(bc -l -e "${snp_sum_genome}/${chr_size}")
-    for feature in genes exons cCREs introns other
+    for feature in exons cCREs introns other
     do
         feature_file=${feature}_chr1.bed
         bedtools coverage -a ${feature_file} -b ${MAF_file} > ${feature_file}_coverage_${MAF_value}.txt
