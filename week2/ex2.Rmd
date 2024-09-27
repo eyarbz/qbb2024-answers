@@ -1,0 +1,26 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df = read_tsv("/Users/cmdb/qbb2024-answers/week2/snp_counts.txt")
+
+df <- df %>%
+  mutate(log2_enrichment = log2(Enrichment))
+
+plot <- ggplot(df, aes(x = MAF, y = log2_enrichment, color = Feature, group = Feature)) +
+  geom_line() +
+  labs(x = "MAF",
+       y = "Log2 Enrichment") +
+  theme_classic()
+
+ggsave("snp_enrichments.pdf", plot = plot)
+```
+       
+
