@@ -1,0 +1,39 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df_AF <- read_tsv("AF.txt")
+
+ggplot(data = df_AF, mapping = aes(x = Allele_Frequency)) +
+  geom_histogram(bins=11) +
+  labs(x = "Allele Frequency",
+       y = "Frequency") +
+  theme_classic()
+
+### Question 3.1 ###
+#idk, normal distribution.
+```
+
+```{r}
+df_DP <- read_tsv("DP.txt")
+
+ggplot(data = df_DP, mapping = aes(x = Read_Depth)) +
+  geom_histogram(bins=21) +
+  xlim(0, 20) + 
+  labs(x = "Read Depth",
+       y = "Frequency") +
+  theme_classic()
+
+### Question 3.2 ###
+#idk, poisson distribution.
+```
+
+
+
