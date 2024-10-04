@@ -11,11 +11,13 @@ library(tidyverse)
 ```{r}
 df_AF <- read_tsv("AF.txt")
 
-ggplot(data = df_AF, mapping = aes(x = Allele_Frequency)) +
-  geom_histogram(bins=11) +
+p1 <- ggplot(data = df_AF, mapping = aes(x = Allele_Frequency)) +
+  geom_histogram(bins=11, fill = "turquoise", color = "black") +
   labs(x = "Allele Frequency",
        y = "Frequency") +
   theme_classic()
+
+ggsave("AF_hist.png", plot = p1, width = 8, height = 6, dpi = 300)
 
 ### Question 3.1 ###
 #idk, normal distribution.
@@ -24,12 +26,14 @@ ggplot(data = df_AF, mapping = aes(x = Allele_Frequency)) +
 ```{r}
 df_DP <- read_tsv("DP.txt")
 
-ggplot(data = df_DP, mapping = aes(x = Read_Depth)) +
-  geom_histogram(bins=21) +
+p2 <- ggplot(data = df_DP, mapping = aes(x = Read_Depth)) +
+  geom_histogram(bins=21, fill = "salmon", color = "black") +
   xlim(0, 20) + 
   labs(x = "Read Depth",
        y = "Frequency") +
   theme_classic()
+
+ggsave("DP_hist.png", plot = p2, width = 8, height = 6, dpi = 300)
 
 ### Question 3.2 ###
 #idk, poisson distribution.
